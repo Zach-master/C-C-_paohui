@@ -1,0 +1,356 @@
+#include<stdio.h>
+#include<malloc.h>
+#include<string.h>
+#include<stdlib.h>
+#include<errno.h>
+typedef struct {
+	char na[8];
+	int xh;
+	int cj;
+} student;
+
+typedef struct LNode {
+	student date ;
+	struct LNode *next;
+} LNode, *Linklist;
+
+void PrintList (Linklist L) {
+    Linklist p;
+    p=L;
+    printf("==============================学生成绩表============================\n");
+    printf("姓名\t\t\t\t学号\t\t\t\t成绩\n");
+    while ( p->next )
+    {
+    	printf("%s\t\t\t\t%d\t\t\t\t%d\n",p->next->date.na,p->next->date.xh,p->next->date.cj);
+    	p = p -> next;
+    }
+    printf("\n");
+    
+}
+
+void S( Linklist L )
+ {
+
+    int i,j=0,q=5;
+    Linklist p, r;
+    p = L;
+    printf("输入要删除信息的学生的学号：(5键返回)\n");
+    scanf("%d", &i);
+    if(q==i)
+    {
+        return ;
+    }
+    while(p->next)
+    {
+        if(p->next->date.xh==i)
+        {
+           r = p->next;
+           p->next=r->next;
+           free(r);
+           j=1;
+        }
+        p = p -> next;
+    }
+    if(j==0)
+    {
+        printf("该学号不存在！\n");
+
+    }
+    else
+    printf("学生信息已删除。\n");
+
+}
+
+void Openfile ( Linklist L )
+{
+    char n[8];
+    int t, s;
+    Linklist p, newn;
+    p = L;   /*尾指针指向头节点*/
+    FILE *r;
+    if ( ( r = fopen ("score.txt", "r" ) ) == NULL ) {
+		printf("can't open the file!!!\n");
+		return ;
+    }
+    while ( fscanf ( r, "%d%s%d", &t, n, &s ) != EOF ) {
+		newn = ( LNode * ) malloc ( sizeof ( LNode ) );
+		strcpy ( newn -> date.na, n );/*字符串初始化后不能直接赋值需要调用strcpy()*/
+		newn -> date.xh = t;
+		newn -> date.cj = s;
+		newn->next=NULL;    /*新节点指针域置空*/
+		p->next=newn;       /*前一个节点指针（即原先的尾指针指向的节点）指向新节点*/
+		p=newn;         /*尾指针指向新的节点*/
+    }
+    fclose(r);
+}
+
+void Openfile2 ( Linklist L )
+{
+    char n[8];
+    int t, s;
+    Linklist p, newn;
+    p = L;   /*尾指针指向头节点*/
+    FILE *r;
+    if ( ( r = fopen ("bk.txt", "r" ) ) == NULL ) {
+		printf("can't open the file!!!\n");
+		return ;
+    }
+    while ( fscanf ( r, "%d%s%d", &t, n, &s ) != EOF ) {
+		newn = ( LNode * ) malloc ( sizeof ( LNode ) );
+		strcpy ( newn -> date.na, n );/*字符串初始化后不能直接赋值需要调用strcpy()*/
+		newn -> date.xh = t;
+		newn -> date.cj = s;
+		newn->next=NULL;    /*新节点指针域置空*/
+		p->next=newn;       /*前一个节点指针（即原先的尾指针指向的节点）指向新节点*/
+		p=newn;         /*尾指针指向新的节点*/
+    }
+    fclose(r);
+}
+
+void Z(Linklist L )
+{
+    int q=5,i;
+    Linklist p,newn;
+    student s;
+    p=L;
+    printf("========================输入要增加的学生信息========================\n");
+    printf("*****学号:");	scanf("%d",&s.xh);
+    printf("*****姓名:");	scanf("%s",s.na);
+	printf("*****成绩:");	scanf("%d",&s.cj);
+	printf("输入完成\n\n");
+    newn=(LNode*)malloc(sizeof(LNode));
+    newn->date= s ;
+    newn->next=p->next;
+    p->next=newn;
+}
+
+void C(Linklist L){
+    int s,j=0,q=5;
+    printf("请输入要查找的学生的学号：(5键返回)\n");/* error: stray '\243' in program|意思是编译器在编译源文件时遇到了不可识别的非法字符注意*/
+    scanf("%d",&s);        /*检查是否有汉字或汉语标点符号或者全角英文字符*/
+    if(q==s)
+    {
+        return ;
+    }
+    Linklist p;
+    p=L->next;
+    while(p)
+	{
+		if(p->date.xh==s)
+        {
+            j=1;
+            printf("该生姓名为:%s\n\n",p->date.na);
+            printf("该生成绩为:%d\n\n",p->date.cj);
+        }
+		p=p->next;
+	}
+	if(j==0)
+    {
+        printf("该学号不存在！");
+    }
+}
+
+void X(Linklist L)
+{
+    int x,choice,x2,j=0,q=5;
+    float c;
+    char n[10];
+    Linklist p;
+    p=L->next;
+    printf("请输入要修改信息的学生的学号：(5键返回)");
+    scanf("%d",&x);
+    if(q==x)
+    {
+        return ;
+    }
+    while(p->next)
+	{
+		if(p->date.xh==x)
+        {
+            j=1;
+            printf("1.修改学号||2.修改姓名||3.修改成绩||4.取消\n");
+            printf("请选择：");
+            scanf("%d",&choice);
+            switch(choice)
+            {
+                case 1:printf("请输入修改后的学号：");
+                scanf("%d",&x2);
+                p->date.xh=x2;
+                printf("修改完成。\n");
+                break;
+                case 2:printf("请输入修改后的姓名：");
+                scanf("%s",n);
+                strcpy(p->date.na,n);
+                printf("修改完成。\n");
+                break;
+                case 3:printf("请输入修改后的成绩：");
+                scanf("%f",&c);
+                p->date.cj=c;
+                printf("修改完成。\n");
+                break;
+                case 4:break;
+            }
+        }
+		p=p->next;
+
+    }
+    if(j==0)
+    {
+        printf("该学号不存在！\n");
+    }
+}
+
+void average(Linklist L)
+{
+    float a,s=0;
+    Linklist p;
+    p=L->next;
+    FILE *fp;
+    fp = fopen("result.dat", "ab");
+    int num=0;
+    while (p)
+        {
+        num++;
+        s +=p->date.cj;
+        p = p->next;
+        }
+        a = s / num;
+    fprintf(fp, "平均分为%.2f\r\n", a);
+    fprintf(fp, "\r\n");
+    fclose(fp);
+}
+
+void save(Linklist L)
+{
+    Linklist p;
+    p=L->next;
+    FILE *fp;
+    fp = fopen("result.dat", "ab");
+    while (p)
+    {
+     fprintf(fp, "%d %s %d\r\n", p->date.xh, p->date.na, p->date.cj);
+     p = p->next;
+    }
+    fprintf(fp, "\r\n");
+    fclose(fp);
+}
+
+void fenshuduan(Linklist L)
+{
+    Linklist p;
+    int  a = 0, q = 0, w = 0, e = 0, r = 0, t = 0, y = 0;
+    FILE *fp;
+    fp = fopen("result.dat", "ab");
+    p=L->next;
+    while (p)
+    {
+        a = p->date.cj / 10;
+        p = p->next;
+        switch (a)
+        {
+        case 10:q++; break;
+        case 9:w++; break;
+        case 8:e++; break;
+        case 7:r++; break;
+        case 6:t++; break;
+        default:y++; break;
+        }
+    }
+    fprintf(fp, "成绩为100有%d人\r\n", q);
+    fprintf(fp, "成绩为90~99有%d人\r\n", w);
+    fprintf(fp, "成绩为80~89有%d人\r\n", e);
+    fprintf(fp, "成绩为70~79有%d人\r\n", r);
+    fprintf(fp, "成绩为60~69有%d人\r\n", t);
+    fprintf(fp, "不及格的有%d人\r\n", y);
+    fprintf(fp, "\r\n");
+    fclose(fp);
+}
+
+void jiangxu(Linklist L)
+{
+    Linklist tail = NULL;
+    while (tail != L->next)
+    {
+        Linklist pre = L;
+        Linklist cur = pre->next;
+        while (cur != tail && cur->next != tail)
+        {
+            if (cur->date.cj< cur->next->date.cj)
+            {
+                //交换当前节点和后一个节点
+                pre->next = cur->next;
+                cur->next = cur->next->next;
+                pre->next->next = cur;
+            }
+            pre = pre->next;
+            cur = pre->next;
+        }
+        tail = cur;
+    }
+}
+
+void changescore(Linklist L, Linklist B)
+{
+    Linklist la = L->next, lb = B->next;
+    while (lb){
+        while (la){
+            if (lb->date.xh == la->date.xh)
+            {
+                if (lb->date.cj >= 60)
+                    la->date.cj = 60;
+                else if (lb->date.cj > la->date.cj)
+                    la->date.cj = lb->date.cj;
+                break;
+            }
+            la = la->next;
+        }
+        lb = lb->next;
+    }
+}
+
+int main()
+{
+    int xuanze,jx=0;
+    Linklist L,B;
+    B = ( Linklist ) malloc ( sizeof (LNode));
+	L = ( Linklist ) malloc ( sizeof ( Linklist ) );
+	L -> next = NULL;
+	B -> next = NULL;
+	Openfile2(B);
+    Openfile(L);
+    PrintList(L);
+	printf("^^^^^^^^^^^^^^^^^^^^^^^学生考评信息管理系统^^^^^^^^^^^^^^^^^^^^^^^\n");
+	while(1)
+    {
+        printf("1.增加学生信息||2.删除学生信息||3.查找学生信息||4.修改学生信息||5.退出系统\n");
+	    printf("请选择<1-5>");
+	    scanf("%d",&xuanze);
+	    switch(xuanze)
+	    {
+          case 1:Z(L);PrintList(L);system("pause");break;
+	      case 2:S(L);PrintList(L);system("pause");break;
+          case 3:C(L);PrintList(L);system("pause");break;
+          case 4:X(L);PrintList(L);system("pause");break;
+          case 5:jx=1;break;
+	    }
+	    if(jx==1){
+         printf("=====================详细信息请在result.dat文件中查看=====================");
+         system("pause");
+         break;
+        }
+    }
+    save(L);
+    average(L);
+    fenshuduan(L);
+    changescore(L,B);
+    jiangxu(L);
+    save(L);
+	return 0;
+}
+
+
+
+
+
+
+
